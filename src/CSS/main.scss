@@ -1,0 +1,68 @@
+.mainContainer{
+    padding-top: 10px;
+}
+.header{
+    position: sticky;
+    top: 10px;
+    background: lighten($color: gray, $amount: 45);
+    input{
+        max-width: 50px;
+    }
+    >div:first-child{
+        display: flex;
+        justify-content: space-around;
+        padding-top: 5px;
+    }
+    >div:nth-child(2){
+        margin-left: 40px;
+        margin-top: 15px;
+        font-size: 1.3em;
+        color: lighten($color: red, $amount: 30);
+    }
+    label span{
+        cursor: pointer;
+    }
+}
+.pagination{
+    span{
+        font-size: 25px;
+        margin: 5px;
+    }
+}
+.postsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    >div{
+        margin: 5px;
+        width: 300px;
+        box-shadow: 4px 4px 5px lightgray;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        .postBody{
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            div{
+                float: right;
+                margin-right: 20px;
+                color: blue;
+                font-size: 1.1em;
+                cursor: pointer;
+            }
+        }
+        p{
+            text-indent: 10px;
+        }
+        p:first-child{
+            font-size: 1.1em;
+            font-weight: bold;  
+        }  
+        p:last-of-type{
+            font-style: italic;
+        }
+        button{
+            max-width: 50px;
+        }
+    }
+}
