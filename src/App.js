@@ -167,5 +167,5 @@ export default function App() {
       </div>
     );
   } 
-  return 'Undefinite error...';
+  return 'Undefined error...';
 }
