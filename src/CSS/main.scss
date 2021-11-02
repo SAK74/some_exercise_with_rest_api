@@ -12,15 +12,10 @@
         display: flex;
         justify-content: space-around;
         padding-top: 5px;
-    }
-    >div:nth-child(2){
-        margin-left: 40px;
-        margin-top: 15px;
-        font-size: 1.3em;
-        color: lighten($color: red, $amount: 30);
-    }
-    label span{
-        cursor: pointer;
+        @media screen and (max-width: 600px) {
+            flex-direction: column;
+        }
+        
     }
 }
 .pagination{
@@ -29,9 +24,28 @@
         margin: 5px;
     }
 }
+.featuresContainer{
+    margin-top: 15px;
+    font-size: 1.3em;
+    color: lighten($color: red, $amount: 30);
+    display: flex;
+    @media screen and (max-width: 600px) {
+    flex-direction: column;
+        label{
+            margin-top: 10px;
+        }
+    }       
+    label{
+        margin-left: 25px;
+        span{
+            cursor: pointer;
+        }
+    }     
+}
 .postsContainer {
     display: flex;
     flex-wrap: wrap;
+    margin-top: 5px;
     >div{
         margin: 5px;
         width: 300px;

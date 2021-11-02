@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { postRemove, selectAllPosts, postsLength } from "./STORE/postsSlice";
 import { selectUserById, selectAllUsers } from "./STORE/usersSlice";
@@ -56,20 +56,15 @@ export default function App() {
   const dispatch = useDispatch();
   const [page, setPage] = useState(0);
   const [perPage, setPerPage] = useState(10);
-  const length = useSelector(postsLength);
-  const pagesAmount = useMemo(() => length ? Math.ceil(length / perPage) : 0, [length, perPage]);
   const [sort, setSort] = useState({by: 'byId', dir: 'up'});
   const users = useSelector(selectAllUsers);
   const author = id => users.find(val => val.id === id).name;
+  const [showByAuthor, setShowByAuthor] = useState('');
 
   const handlePerPage = ev => {
     const value = Number(ev.currentTarget.value);
     setPerPage(value <= 1 ? 1 : Math.min(value, 100));
     setPage(0);
-  }
-  const handlePage = ev => {
-    const value = Number(ev.currentTarget.value) - 1;
-    setPage(value <= 0 ? 0 : Math.min(value, pagesAmount -1));
   }
   const handleSort = ev => {
       setSort(prev => ev.target.tagName === 'SELECT' ? ({...prev, by: ev.target.value}) : 
@@ -89,13 +84,15 @@ export default function App() {
     ev.target.parentElement.style.whiteSpace = whiteSpace;
     ev.target.innerText = text;
   }
+
   if (statusPosts === 'loadung' || statusUsers === 'loading') return <div className = 'loader'>...loading</div>
   if (statusPosts === 'error' || statusUsers === 'error') {
     return <div>{errorPosts ? errorPosts : errorUsers}</div>;
   }    
   if (statusPosts === 'complete' && statusUsers === 'complete'){
-    const renderedPostst = posts.map(val => ({...val, author: author(val.userId)}))
-    .sort(funcSort[sort.by][sort.dir]).map((val, index) => {
+    let filteredPosts = posts.map(val => ({...val, author: author(val.userId)}));
+    if (showByAuthor) filteredPosts = filteredPosts.filter(value => value.author === showByAuthor);
+    const renderedPostst = filteredPosts.sort(funcSort[sort.by][sort.dir]).map((val, index) => {
       if (val)
         return (
           <div key = {index}>
@@ -111,9 +108,23 @@ export default function App() {
         );
       return null;
     });
+    
+    const length = filteredPosts.length;
+    const pagesAmount = Math.ceil(length / perPage);
+
+    const handlePage = ev => {
+      const value = Number(ev.currentTarget.value) - 1;
+      setPage(value <= 0 ? 0 : Math.min(value, pagesAmount -1));
+    }
+
+    const authorsList = users.slice().map(user => 
+      <option key = {user.id} value = {user.name}>{user.name}</option>
+    );
+
     return (
       <div className = 'mainContainer'>
         <div className = 'header'>
+          &nbsp; its {renderedPostst.length} posts
           <div>
             <label>
               Posts per page:&nbsp;
@@ -129,7 +140,9 @@ export default function App() {
               <span onClick = {() => setPage(pagesAmount-1)}>{' \u00bb '}</span>
             </label>
           </div>
-          <div>
+          <hr/>
+        </div>
+        <div className = 'featuresContainer'>
             <label>
               sort by:&nbsp;
               <select value = {sort.by} onChange = {handleSort}>
@@ -140,10 +153,14 @@ export default function App() {
               &nbsp;
               <span onClick = {handleSort}>{sort.dir === 'up' ? '\u2191' : '\u2193'}</span>
             </label>
+            <label>
+              show posts by&nbsp;
+              <select value = {showByAuthor} onChange = {ev => setShowByAuthor(ev.target.value)}>
+                <option value = ''/>
+                {authorsList}
+              </select>
+            </label>
           </div>
-          <hr/>
-        </div>
-        <br/>
         <div className = 'postsContainer'>
           {renderedPostst.slice(page * perPage, page * perPage + perPage)}
         </div>
