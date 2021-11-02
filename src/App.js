@@ -61,17 +61,6 @@ export default function App() {
   const author = id => users.find(val => val.id === id).name;
   const [showByAuthor, setShowByAuthor] = useState('');
 
-  const handlePerPage = ev => {
-    const value = Number(ev.currentTarget.value);
-    setPerPage(value <= 1 ? 1 : Math.min(value, 100));
-    setPage(0);
-  }
-  const handleSort = ev => {
-      setSort(prev => ev.target.tagName === 'SELECT' ? ({...prev, by: ev.target.value}) : 
-      prev.dir === 'up' ?  ({...prev, dir: 'down'}) : ({...prev, dir: 'up'})
-      );
-      setPage(0);
-  }
   const handleMoreClick = ev => {
     let whiteSpace, text;
     if(ev.target.parentElement.style.whiteSpace === 'initial'){
@@ -116,6 +105,17 @@ export default function App() {
       const value = Number(ev.currentTarget.value) - 1;
       setPage(value <= 0 ? 0 : Math.min(value, pagesAmount -1));
     }
+    const handlePerPage = ev => {
+      const value = Number(ev.currentTarget.value);
+      setPerPage(value <= 1 ? 1 : Math.min(value, length));
+      setPage(0);
+    }
+    const handleSort = ev => {
+      setSort(prev => ev.target.tagName === 'SELECT' ? ({...prev, by: ev.target.value}) : 
+      prev.dir === 'up' ?  ({...prev, dir: 'down'}) : ({...prev, dir: 'up'})
+      );
+      setPage(0);
+    }
 
     const authorsList = users.slice().map(user => 
       <option key = {user.id} value = {user.name}>{user.name}</option>
@@ -124,7 +124,7 @@ export default function App() {
     return (
       <div className = 'mainContainer'>
         <div className = 'header'>
-          &nbsp; its {renderedPostst.length} posts
+          &nbsp; its {length} posts
           <div>
             <label>
               Posts per page:&nbsp;
