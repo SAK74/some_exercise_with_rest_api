@@ -30,14 +30,22 @@
     font-size: 1.3em;
     color: lighten($color: red, $amount: 30);
     display: flex;
+    button{
+        color: inherit;
+        background: transparent;
+        border: none;
+        font-size: inherit;
+        cursor: pointer;
+    }
     @media screen and (max-width: 600px) {
     flex-direction: column;
-        label{
+        >*{
             margin-top: 10px;
         }
     }       
-    label{
+    >*{
         margin-left: 25px;
+        display: flex;
         span{
             cursor: pointer;
         }

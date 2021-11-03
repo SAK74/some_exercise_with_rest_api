@@ -60,6 +60,7 @@ export default function App() {
   const users = useSelector(selectAllUsers);
   const author = id => users.find(val => val.id === id).name;
   const [showByAuthor, setShowByAuthor] = useState('');
+  const [search, setSearch] = useState('');
 
   const handleMoreClick = ev => {
     let whiteSpace, text;
@@ -74,23 +75,44 @@ export default function App() {
     ev.target.innerText = text;
   }
 
+  const searchMatch = str => {
+    let indexMatch, start = 0;
+    const result = [];
+    while ((indexMatch = str.slice().toLowerCase().indexOf(search.toLowerCase(), start)) !== -1){
+      result.push(
+        <span key = {indexMatch}>
+          {str.substring(start, indexMatch)}
+          <i style = {{color: 'red', backgroundColor: 'yellow'}}>
+            {str.substr(indexMatch, search.length)}
+          </i>
+        </span>
+      );
+      start = indexMatch + search.length;
+    }
+    if (!result.length) return str;
+    result.push(str.substring(start));
+    return result;
+  }
+  
   if (statusPosts === 'loadung' || statusUsers === 'loading') return <div className = 'loader'>...loading</div>
   if (statusPosts === 'error' || statusUsers === 'error') {
     return <div>{errorPosts ? errorPosts : errorUsers}</div>;
   }    
   if (statusPosts === 'complete' && statusUsers === 'complete'){
     let filteredPosts = posts.map(val => ({...val, author: author(val.userId)}));
+
     if (showByAuthor) filteredPosts = filteredPosts.filter(value => value.author === showByAuthor);
+
     const renderedPostst = filteredPosts.sort(funcSort[sort.by][sort.dir]).map((val, index) => {
       if (val)
         return (
           <div key = {index}>
-            <p>{val.title}</p>
+            <p>{search ? searchMatch(val.title) : val.title}</p>
             <div className = 'postBody'>
-              {val.body}
+              {search ? searchMatch(val.body) : val.body}
               <div onClick = {handleMoreClick}>more...</div>
             </div>
-            <p>by {val.author}</p>
+            <p>by {search ? searchMatch(val.author) : val.author}</p>
             <button onClick = {() => dispatch(postRemove(val.id))}>delete</button>
             <br/>
           </div>
@@ -115,6 +137,10 @@ export default function App() {
       prev.dir === 'up' ?  ({...prev, dir: 'down'}) : ({...prev, dir: 'up'})
       );
       setPage(0);
+    }
+    const handleSubmit = ev => {
+      ev.preventDefault();
+      setSearch(ev.target.searchInput.value);
     }
 
     const authorsList = users.slice().map(user => 
@@ -143,29 +169,33 @@ export default function App() {
           <hr/>
         </div>
         <div className = 'featuresContainer'>
-            <label>
-              sort by:&nbsp;
-              <select value = {sort.by} onChange = {handleSort}>
-                <option value = 'byId'> id</option>
-                <option value = 'byTitle'> title</option>
-                <option value = 'byAuthorName'> author name</option>
-              </select>
-              &nbsp;
-              <span onClick = {handleSort}>{sort.dir === 'up' ? '\u2191' : '\u2193'}</span>
-            </label>
-            <label>
-              show posts by&nbsp;
-              <select value = {showByAuthor} onChange = {ev => setShowByAuthor(ev.target.value)}>
-                <option value = ''/>
-                {authorsList}
-              </select>
-            </label>
-          </div>
+          <label>
+            sort by:&nbsp;
+            <select value = {sort.by} onChange = {handleSort}>
+              <option value = 'byId'> id</option>
+              <option value = 'byTitle'> title</option>
+              <option value = 'byAuthorName'> author name</option>
+            </select>
+            &nbsp;
+            <span onClick = {handleSort}>{sort.dir === 'up' ? '\u2191' : '\u2193'}</span>
+          </label>
+          <label>
+            show posts by&nbsp;
+            <select value = {showByAuthor} onChange = {ev => setShowByAuthor(ev.target.value)}>
+              <option value = ''/>
+              {authorsList}
+            </select>
+          </label>
+          <form onSubmit = {handleSubmit}>
+              <button type = 'submit'>🔍</button>
+              <input name = 'searchInput' defaultValue = ''/>
+          </form>
+        </div>
         <div className = 'postsContainer'>
           {renderedPostst.slice(page * perPage, page * perPage + perPage)}
         </div>
       </div>
     );
   } 
-  return 'Undefinite error...';
+  return 'Undefined error...';
 }
