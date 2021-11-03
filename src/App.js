@@ -78,7 +78,7 @@ export default function App() {
   const searchMatch = str => {
     let indexMatch, start = 0;
     const result = [];
-    while ((indexMatch = str.slice().toLowerCase().indexOf(search.toLowerCase(), start)) !== -1){
+    while ((indexMatch = str.toLowerCase().indexOf(search.toLowerCase(), start)) !== -1){
       result.push(
         <span key = {indexMatch}>
           {str.substring(start, indexMatch)}
