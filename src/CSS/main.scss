@@ -54,6 +54,7 @@
 .postsContainer {
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-around;
     margin-top: 5px;
     >div{
         margin: 5px;
