@@ -146,7 +146,7 @@ export default function App() {
     const authorsList = users.slice().map(user => 
       <option key = {user.id} value = {user.name}>{user.name}</option>
     );
-
+    
     return (
       <div className = 'mainContainer'>
         <div className = 'header'>
